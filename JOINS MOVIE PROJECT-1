@@ -1,0 +1,96 @@
+create database project1
+use project1
+
+create table movies(movie_id int,title varchar(20),genre varchar(20),release_year int)
+
+insert into movies values(1,'bahubali','history',2015)
+insert into movies values(2,'kanchana','horror',2011)
+insert into movies values(3,'avatar','Science-fiction',2009)
+insert into movies values(6,'love today','romance',2020)
+insert into movies values(8,'premalu','comedy',2022)
+insert into movies values(10,'puspha','action',2021)
+insert into movies values(15,'salaar','drama',2023)
+insert into movies values(7,'ms dhoni','biopic',2014)
+insert into movies values(18,'dhrushyam','thriller',2012)
+insert into movies values(14,'lion king','animation',2016)
+
+select*from movies
+
+
+create table actors(actor_name varchar(20),actor_id int)
+
+insert into actors values('prabhas',58)
+insert into actors values('raghava lawrence',65)
+insert into actors values('sam worthington',72)
+insert into actors values('pradeep ranganath',45)
+insert into actors values('nasleen',52)
+insert into actors values('allu arjun',23)
+insert into actors values('prabhas',41)
+insert into actors values('sushant singh',72)
+insert into actors values('venkatesh',83)
+insert into actors values('lion',45)
+
+
+select * from actors
+
+
+create table rating(rating_id int,movie_id int,rating float)
+insert into rating values(915,1,8.7)
+insert into rating values(918,2,8.5)
+insert into rating values(920,3,9.2)
+insert into rating values(851,7,7.5)
+insert into rating values(624,10,7.8)
+insert into rating values(528,5,6.3)
+insert into rating values(678,9,7.2)
+insert into rating values(456,14,5.4)
+insert into rating values(250,18,8.2)
+insert into rating values(845,8,6.7)
+
+select * from rating
+
+------Queries----
+---1.view all movies with avg rating
+select m.movie_id,m.title,avg(r.rating) as avgrating
+from movies m
+inner join rating r 
+on m.movie_id = r.movie_id
+group by m.movie_id, m.title
+
+---2.find highest rated movie in each genre
+select  m.genre,m.title,max(r.rating) as rating
+from movies m join rating r
+on m.movie_id=r.movie_id
+group by m.genre,m.title
+
+-----3.find the overall highest-rated movie
+select top 1 m.title,m.genre,max(r.rating) as overall_rating
+from movies m
+join rating r
+on m.movie_id=r.movie_id
+group by m.title,m.genre 
+order by overall_rating desc 
+
+-----4.find the overall lowest rated movie
+select top 1 m.genre,m.title,min(r.rating) as lowest_rated_movie
+from movies m
+join rating r
+on m.movie_id=r.movie_id
+group by m.genre,m.title
+order by lowest_rated_movie
+
+-----5.find the average rating per genre
+select m.genre,m.title,avg(r.rating) as avg_genre
+from movies m
+join rating r
+on m.movie_id=r.movie_id
+group by m.genre,m.title
+order by avg_genre
+
+
+------Display all Tables
+select * from movies
+select * from actors
+select * from rating
+
+
+
