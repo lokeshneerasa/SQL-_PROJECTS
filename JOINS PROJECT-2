@@ -1,0 +1,163 @@
+create database project2
+use project2
+
+---Tables Creation---
+---customers(customer_id, name, city)
+----orders(order_id, customer_id, order_date, amount)
+---products(product_id, product_name, price)
+---order_items(order_id, product_id, quantity)
+
+create table customer(customer_id int,name varchar(20),city varchar(20))
+----Insert values into Table---
+insert into customer values(25,'ravi','hyderabad')
+insert into customer values(54,'sai','vizag')
+insert into customer values(82,'raju','bobbili')
+insert into customer values(74,'sandhya','vizag')
+insert into customer values(95,'david','kurnool')
+insert into customer values(67,'vani','kadapa')
+
+select * from customer
+
+
+create table orders (order_id int,customer_id int,order_date date,amount decimal(7,2))
+
+insert into orders values(240,82,'2026-04-12',4500.00)
+insert into orders values(456,54,'2026-04-13',500.00)
+insert into orders values(195,25,'2026-04-14',850.00)
+insert into orders values(428,74,'2026-04-15',720.00)
+insert into orders values(527,22,'2026-04-16',950.00)
+insert into orders values(286,95,'2026-04-17',3000.00)
+
+select * from orders
+
+
+
+create table products(product_id int,product_name varchar(30),price int)
+
+insert into products values(634,'cooker',3700)
+insert into products values(645,'fan',5400)
+insert into products values(656,'washing machine',12000)
+insert into products values(628,'mobile',17000)
+insert into products values(668,'trolly bag',4000)
+insert into products values(655,'watch',8000)
+
+select * from products
+
+
+create table order_items(order_id int,product_id int,quantity int)
+insert into order_items values(195,656,1)
+insert into order_items values(286,655,3)
+insert into order_items values(120,895,2)
+insert into order_items values(240,634,1)
+insert into order_items values(512,354,2)
+insert into order_items values(428,628,2)
+
+select * from order_items
+
+
+select * from customer
+select * from orders
+select * from products
+select * from order_items
+
+
+
+---Join Questions
+---?? Basic
+--1.List all customers with their orders
+select c.customer_id,c.name,o.order_id,o.order_date
+from customer c
+join orders o
+on c.customer_id=o.customer_id
+
+--2.Show customer name and order amount
+select c.name,o.amount
+from customer c
+join orders o
+on c.customer_id=o.customer_id
+
+--3.Display all orders with customer city
+select c.city,o.order_id,o.order_date
+from customer c
+inner join orders o
+on c.customer_id=o.customer_id
+
+--4.Show all products in each order
+select p.product_id,p.product_name,i.order_id
+from products p
+join order_items i
+on p.product_id=i.product_id
+
+--?? Intermediate
+--Show customer name, product name, and quantity
+select c.name,p.product_name,i.quantity
+from customer c
+inner join orders o on c.customer_id=o.customer_id
+inner join order_items i on o.order_id=i.order_id
+inner join products p on i.product_id=p.product_id
+
+--List all orders with total items purchased
+select o.order_id,sum(i.quantity) as total_items
+from orders o  
+join order_items i
+on o.order_id = i.order_id
+group by o.order_id
+
+--Show all customers who placed orders (INNER JOIN)
+select c.customer_id,c.name,o.order_id
+from customer c
+inner join orders o
+on c.customer_id = o.customer_id
+
+--Show all customers including those without orders (LEFT JOIN)
+select c.customer_id,c.name,o.order_id
+from customer c
+left join orders o
+on c.customer_id = o.customer_id
+
+--Display products that were never ordered
+select p.product_id,p.product_name,i.order_id
+from products p
+left join order_items i
+on p.product_id = i.product_id
+
+--?? Advanced
+--Show customer name and total amount spent
+select c.name,sum(o.amount) as total_amount
+from customer c
+inner join orders o
+on c.customer_id = o.customer_id
+group by c.name
+
+--Find top-selling product (using JOIN + GROUP BY)
+select top 1
+p.product_id,p.product_name,sum(i.quantity) as total_sold
+from products p
+inner join order_items i
+on p.product_id = i.product_id
+group by p.product_id,p.product_name
+order by total_sold desc
+
+--List customers who bought more than 2 different products
+select c.name,c.customer_id
+from customer c
+join orders o on c.customer_id=o.customer_id
+join order_items i on o.order_id=i.order_id
+group by c.customer_id,c.name
+having count(distinct i.product_id)>2
+
+--Show orders with more than 2 items
+select o.order_id,sum(i.quantity) as total_items
+from orders o
+join order_items i
+on o.order_id=i.order_id
+group by o.order_id
+having sum(i.quantity)>2
+
+--Display customer who spent the highest amount
+select top 1 c.customer_id,c.name,max(o.amount) as highest_amount
+from customer c
+join orders o
+on c.customer_id=o.customer_id
+group by c.customer_id,c.name
+order by highest_amount desc
