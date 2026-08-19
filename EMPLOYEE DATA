@@ -1,0 +1,681 @@
+create database db
+use db
+create table emp(empname varchar(10),empno numeric(5),salary numeric(7,2),job varchar(10))
+create table dept(deptno numeric(10),deptname varchar(10),job varchar(10))
+
+insert into emp values('lokesh',205,30000,'scientist')
+insert into emp values('tarun',356,40000,'analyst')
+insert into emp values('babi',875,20000,'developer')
+
+select * from emp
+
+insert into dept values(119,'sales','executive')
+insert into dept values(150,'accounting','manager')
+insert into dept values(220,'research','scientist')
+
+select * from dept
+
+update emp set salary=50000 where empname='lokesh'
+select * from emp
+
+alter table dept add loc varchar(10)
+select * from dept
+
+update dept set loc='hyd' where deptno=119
+select * from dept
+
+update dept set loc='ppm' where deptno=150
+select * from dept
+
+update dept set loc='vzm' where deptno=220
+select * from dept
+
+select * from emp order by salary desc 
+select * from emp 
+
+select top 2 * from emp
+------------delete------------
+begin transaction
+delete emp where empno=875
+select * from emp
+rollback
+select * from emp
+-----------commit and rollback-------
+begin transaction
+
+delete dept where deptno=150
+
+select * from dept
+
+rollback
+
+select * from dept
+
+-------------------constraints---------------------
+------>1.Unique<----------
+create table a1(stdid int unique,stdname varchar(10),sgender varchar(10))
+insert into a1 values(1,'ravi','m')
+insert into a1 values(1,'raju','m')
+select * from a1
+
+-------->2.Not Null<------
+create table a2(stdid int,stdname varchar(10) not null,sgender varchar(10))
+insert into a2 values(5,'sai','m')
+insert into a2 values(6,'m')
+select * from a2
+
+---------->3.Primary Key<-----------
+create table a3(stdid int primary key,sname varchar(10),sgender varchar(10))
+insert into a3 values(12,'vamsi','m')
+insert into a3 values(12,'ram','m')
+insert into a3 values('nani','m')
+select * from a3
+
+----------->4.Foreign Key<-----------
+create table students(stdid int primary key,stdname varchar(10))
+insert into students values(16,'hari')
+insert into students values(35,'vinay')
+insert into students values(21,'rani')
+select * from students
+
+
+create table courses(courseid int primary key,coursename varchar(10),stdid int,
+foreign key(stdid)references students(stdid))
+
+insert into courses values(554,'java',16)
+insert into courses values(681,'python',35)
+insert into courses values(237,'mern',21)
+
+select * from students
+select * from courses
+-----------InnerJoin---------
+select s.stdid,s.stdname,c.courseid,c.coursename
+from students s inner join courses c
+on s.stdid=c.stdid
+----------crossJoin------------
+select s.stdid,s.stdname,c.courseid,c.coursename
+from students s cross join courses c
+-----------LeftJoin----------
+select s.stdid,s.stdname,c.courseid,c.coursename
+from students s left join courses c
+on s.stdid=c.stdid
+----------RightJoin---------
+select s.stdid,s.stdname,c.courseid,c.coursename
+from courses c right join students s
+on s.stdid=c.stdid
+----------FullJoin-----------
+select s.stdid,s.stdname,c.courseid,c.coursename
+from students s full join courses c
+on s.stdid=c.stdid
+----------->5.default<------------
+create table a4
+(
+stdid int,
+sname varchar(10),
+city varchar(10) default 'hyderabad')
+
+insert into a4 values(45,'john','ppm')
+insert into a4 (stdid,sname)values(69,'kalyan')
+insert into a4 values(43,'johnbb',default)
+insert into a4 (stdid,sname)values(87,'pawan')
+insert into a4 values(29,'abhi',default)
+select * from a4
+
+---------->6.check<------------
+create table a5
+(
+stdid int,
+sname varchar(10),
+sgender varchar(10),
+age int check(age>=18)
+)
+
+insert into a5 values(42,'santhu','m',21)
+insert into a5 values(81,'ramya','f',15)
+insert into a5 values(30,'karthik','m',18)
+
+select * from a5
+
+----------->7.Auto_increment/Identity<---------
+create table a6
+(
+stdid int primary key identity(1,1),
+stdname varchar(10),
+sgender varchar(10),
+age int
+)
+
+insert into a6(stdname,sgender)values('uday','m')
+insert into a6(stdname,sgender)values('pavani','f')
+insert into a6 values('neelima','f',24)
+insert into a6 values('mani','m',22)
+
+select * from a6
+
+-----------operators-------------
+create table workers (
+    emp_id int primary key,
+    name varchar(20),
+    department varchar(20),
+    salary int,
+    city varchar(20),
+    age int
+);
+
+insert into workers values
+(1,'Lokesh','IT',50000,'Hyderabad',23),
+(2,'Anu','HR',40000,'Chennai',25),
+(3,'Ravi','IT',60000,'Bangalore',28),
+(4,'Sita','Finance',45000,'Hyderabad',26),
+(5,'Kiran','IT',70000,'Chennai',30),
+(6,'Meena','HR',38000,'Bangalore',24),
+(7,'Arjun','Finance',52000,'Hyderabad',27),
+(8,'Divya','IT',48000,'Chennai',22);
+insert into workers values
+(9,'Raju','HR',Null,'Bangalore',26);
+
+select * from workers
+delete from workers where emp_id=9
+--------1.Arithmetic Operators(+,-,*,/,%)---------
+select name,salary,
+       salary + 5000 as bonus,
+       salary * 2 as doublesalary,
+       salary - 2000 as tax
+from workers
+
+-------2.Comparison Operators(>,<,=,>=,<=,!=)-----------
+select * from workers where salary>40000
+select * from workers where salary<40000
+select * from workers where department='it'
+select * from workers where salary>=40000
+select * from workers where salary<=40000
+select * from workers where salary>40000
+select * from workers where salary!=40000
+
+
+-------3.Logical Operators(AND,OR,NOT)----------
+---1.AND operator
+select * from workers 
+where department='it' and salary>50000
+
+-----2.OR operator
+select * from workers
+where city='hyderabad' or city='bangalore'
+
+-----3.NOT operator
+select * from workers
+where not department='hr'
+
+-------4.special operators(BETWEEN, IN, LIKE, NULL)
+---1.BETWEEN
+select * from workers
+where salary between 30000 and 40000
+
+---2.IN
+select * from workers
+where city in('hyderabad','bangalore')
+
+---3.LIKE Operator (Pattern Matching)
+select * from workers where name like 'A%' ---starts with a
+select * from workers where name like '%A' ----ends with a
+select * from workers where name like '_A%' ---second letter a
+
+---4.NOT LIKE operator 
+select * from workers where name not like 'A%'---not starts with a
+select * from workers where name not like '%A'----not ends with a
+select * from workers where name not like '_i%'----second letter not a
+
+----5.IS NULL Operator
+select * from workers where salary is null
+
+select * from workers where salary is not null
+
+----5.Assignment Operator (= in UPDATE)
+update workers
+set salary = 60000
+where emp_id=3
+select * from workers
+
+----6.Advanced operator(Exists,Any,All)
+----1.Exists
+if exists(
+select * from workers where emp_id=1)
+print('ok')
+
+---2.Any
+select * from workers
+where salary > any(select salary from workers where department='it')
+
+---3.ALL
+select * from workers
+where salary < any (select salary from workers where department='hr')
+
+------7.SET OPERATORS---------
+---1.UNION Operator
+select name from workers where city='Hyderabad'
+union
+select name from workers where city='chennai'
+
+---2.UNION ALL OPERATOR
+select name from workers where city='Hyderabad'
+union all
+select name from workers where city='Bangalore'
+
+---3.INTERSECT OPERATOR
+select emp_id from workers where city='Hyderabad'
+intersect
+select emp_id from workers where department='IT'
+
+---4.EXCEPT Operator
+select emp_id from workers where city='Hyderabad'
+except
+select emp_id from employees where department='IT'
+
+
+--------Orderby GroupBy Having-----------
+CREATE TABLE employees (
+    emp_id INT,
+    name VARCHAR(50),
+    department VARCHAR(20),
+    salary INT
+)
+
+
+INSERT INTO employees VALUES
+(1, 'A', 'IT', 50000),
+(2, 'B', 'HR', 40000),
+(3, 'C', 'IT', 60000),
+(4, 'D', 'HR', 45000),
+(5, 'E', 'IT', 70000),
+(6, 'F', 'Sales', 30000),
+(7, 'G', 'Sales', 35000),
+(8, 'H', 'IT', 65000),
+(9, 'I', 'HR', 48000),
+(10, 'J', 'Sales', 32000)
+
+select * from employees
+
+----->1.GROUPBY<-------
+select department,avg(salary)
+from employees
+group by department
+
+----->2.ORDERBY<------
+select * from employees
+order by salary desc
+
+----->3.HAVING<-------
+select department,avg(salary)
+from employees
+group by department
+having avg(salary)>=40000
+
+--------Sub Queries-----
+----find employees who has more than avg salary----
+select name,salary
+from employees
+where salary>(select avg(salary) from employees)
+
+------find Max salary-----
+select name,salary
+from employees
+where salary =(select max(salary) from employees)
+--------find minimum salary-----
+select name,salary
+from employees
+where salary =(select min(salary) from employees)
+---------Find employees working in departments where salary > 60000 exists-------
+SELECT name, department
+FROM employees
+WHERE department IN (
+    SELECT department
+    FROM employees
+    WHERE salary > 60000
+);
+--------Find employees working in departments where salary < 50000 exists-------
+select name,department
+from employees
+where department IN(
+    select department
+    from employees
+    where salary<50000
+)
+------Find employees working in same department as ‘A’
+select name,department
+from employees
+where department =(
+    select department
+    from employees
+    where name='A'
+)
+
+-----Find employees who earn more than all HR employees
+select name,salary
+from employees
+where salary>all(
+    select salary
+    from employees
+    where department='HR'
+)
+------Find employees whose salary is greater than ANY IT employee
+select name,salary
+from employees
+where salary>any(
+    select salary
+    from employees
+    where department='IT'
+)
+------Find departments with no employees earning below 40000
+select distinct department
+from employees e1
+where not exists(
+    select 1
+    from employees e2
+    where e1.department=e2.department
+    and e2.salary<40000
+)
+------Find employees with salary equal to department minimum
+select name,department,salary
+from employees e1
+where salary=(
+    select min(salary)
+    from employees e2
+    where e1.department=e2.department
+)
+----Mixed Queries-----
+-----Find customers whose order amount is above average order amount
+select distinct c.customer_id,c.name
+from customers c
+join orders o on c.customer_id=o.customer_id
+where o.amount>(
+select avg(amount) from orders
+)
+-----Find customers who placed orders greater than max order in Chennai
+select distinct c.customer_id,c.name,c.city
+from customers c
+join orders o on c.customer_id=o.customer_id
+where o.amount>(
+     select max(o2.amount)
+     from orders o2
+     join customers c2 on o2.customer_id=c2.customer_id
+     where c2.city='chennai'
+)
+
+---------Aggregate Functions-----
+CREATE TABLE sales (
+    sale_id INT,
+    product VARCHAR(50),
+    category VARCHAR(30),
+    quantity INT,
+    price INT,
+    city VARCHAR(30)
+);
+
+INSERT INTO sales VALUES
+(1, 'Laptop', 'Electronics', 2, 50000, 'Hyderabad'),
+(2, 'Mobile', 'Electronics', 5, 20000, 'Chennai'),
+(3, 'Shirt', 'Clothing', 10, 1000, 'Hyderabad'),
+(4, 'Shoes', 'Clothing', 4, 2000, 'Mumbai'),
+(5, 'TV', 'Electronics', 1, 60000, 'Chennai'),
+(6, 'Jeans', 'Clothing', 6, 1500, 'Mumbai'),
+(7, 'Tablet', 'Electronics', 3, 30000, 'Hyderabad'),
+(8, 'Jacket', 'Clothing', 2, 2500, 'Chennai'),
+(9, 'Watch', 'Accessories', 8, 3000, 'Mumbai'),
+(10, 'Bag', 'Accessories', 5, 2000, 'Hyderabad')
+
+select * from sales
+
+----->1.Find total number of sales
+select count(*) as total_sales
+from sales
+----->2.Find total quantity sold
+select sum(quantity) as total_quantity
+from sales
+----->3.Find average price of products
+select product,avg(price) as avg_price
+from sales
+group by product
+----->4.Find maximum price
+select max(price) as max_price
+from sales
+------>5.Find minimum price
+select min(price) as min_price
+from sales
+
+---->6.Find total quantity sold for each category
+select category,sum(quantity) as total_quantity
+from sales
+group by category
+----->7.Find average price per category
+select category,avg(price) as avg_price
+from sales
+group by category
+----->8.Count number of sales in each city
+select city,count(*) as no_of_sales
+from sales
+group by city
+----->9.Find maximum price in each category
+select category,max(price) as max_price
+from sales
+group by category
+----->10.Find total sales per city
+select city,sum(quantity*price) as tot_sales
+from sales
+group by city
+
+----->11.Find categories where total quantity > 10
+select category,sum(quantity) as total_quantity
+from sales
+group by category
+having sum(quantity)>10
+----->12.Find cities where average price > 20000
+select city,avg(price) as avg_price
+from sales
+group by city
+having avg(price)>20000
+----->13.Find categories having more than 2 products
+select category,count(product) as products
+from sales
+group by category
+having count(product)>2
+----->14.Find cities where total sales amount > 100000
+select city,sum(quantity*price) as total_sales
+from sales
+group by city
+having sum(quantity*price)>100000
+
+---->15.Find category with highest total sales
+select top 1 category,max(quantity*price) as total_sales
+from sales
+group by category
+order by total_sales desc
+---->16.Find city with lowest average price
+select top 1 city,avg(price) as avg_price
+from sales
+group by city
+order by avg_price asc
+---->17.Find second highest price
+select max(price) as second_highest_price
+from sales
+where price < (select max(price) from sales)
+
+----->18.Find total revenue per product
+select product,sum(quantity*price) as total_revenue
+from sales
+group by product
+
+---->19.Find categories where average quantity < 5
+select category,avg(quantity) as avg_quantity
+from sales
+group by category
+having avg(quantity)<5
+
+
+
+-----------JOINS-------
+-----Table1------
+create table customers(
+customer_id int,
+name varchar(10),
+city varchar(10)
+)
+
+insert into customers values
+(1,'lokesh','hyderabad'),
+(2, 'Ravi', 'Chennai'),
+(3, 'Anu', 'Mumbai'),
+(4, 'Priya', 'Delhi'),
+(5, 'Kiran', 'Hyderabad')
+
+select * from customers
+-----Table2-----
+create table orders (
+rder_id int,
+customer_id int,
+product varchar(10),
+amount int
+)
+
+insert into orders values
+(101, 1, 'Laptop', 50000),
+(102, 2, 'Mobile', 20000),
+(103, 1, 'Tablet', 30000),
+(104, 3, 'Shoes', 2000),
+(105, 6, 'Watch', 3000)  
+
+select * from orders
+
+-----table3------
+create table payments(
+payment_id int,
+order_id int,
+status varchar(10)
+)
+
+insert into payments values
+(1, 101, 'Paid'),
+(2, 102, 'Pending'),
+(3, 103, 'Paid'),
+(4, 104, 'Failed')
+
+select * from payments
+
+----1.show all customers with their orders innerjoin----
+select c.customer_id,c.name,c.city,o.rder_id,o.product,o.amount
+from customers c
+inner join orders o
+on c.customer_id = o.customer_id
+----2.Show all customers and their orders (including customers with no orders)
+select c.customer_id,c.name,c.city,o.rder_id,o.product,o.amount
+from customers c 
+full join orders o
+on c.customer_id=o.customer_id
+-----3.Show all orders even if customer does not exist
+select c.customer_id,c.name,c.city,o.rder_id,o.product,o.amount
+from customers c
+right join orders o
+on c.customer_id=o.customer_id
+------4.Show customer name and product they ordered
+select c.customer_id,c.name,c.city,o.rder_id,o.product,o.amount
+from customers c
+inner join orders o
+on c.customer_id=o.customer_id
+
+----5.Find total order amount per customer
+select c.customer_id,c.name,sum(o.amount) as total_amount
+from customers c
+right join orders o
+on c.customer_id=o.customer_id
+group by c.customer_id,c.name
+-----6.Find customers who placed more than 1 order
+select c.customer_id,c.name,count(o.rder_id) as total_orders
+from customers c
+inner join orders o
+on c.customer_id=o.customer_id
+group by c.customer_id,c.name
+having count(o.rder_id)>1
+----7.Show customers who have NOT placed any orders
+select c.customer_id,c.name,c.city,o.rder_id
+from customers c
+left join orders o
+on c.customer_id=o.customer_id
+where o.rder_id is null
+----8.Show orders with payment status
+select o.rder_id,o.product,o.amount,p.payment_id,p.status
+from orders o
+right join payments p
+on o.rder_id=p.order_id
+
+----9.Find customers whose orders are all “Paid”
+select c.customer_id,c.name,c.city,o.rder_id,o.product,o.amount,p.status
+from customers c 
+inner join orders o on c.customer_id=o.customer_id
+inner join payments p on o.rder_id=p.order_id
+where status='paid'
+
+----10.Find customers with at least one “Pending” payment
+select  c.customer_id,c.name,c.city,o.rder_id,o.product,o.amount,p.status
+from customers c
+inner join orders o on c.customer_id=o.customer_id
+inner join payments p on o.rder_id=p.order_id
+where status='pending'
+
+-----11.Show total amount of paid orders per customer
+select c.customer_id,c.name,sum(o.amount) as total_amount
+from customers c
+inner join orders o on c.customer_id=o.customer_id
+inner join payments p on o.rder_id=p.order_id
+where p.status='paid'
+group by c.customer_id,c.name
+
+------12.Find highest order amount per city
+select c.city,max(o.amount) as highest_order
+from customers c
+inner join orders o on c.customer_id=o.customer_id
+group by c.city
+
+
+-----Nested Subqueries
+------1.Find employees whose salary is greater than max salary of HR but less than max of IT
+select name, department, salary
+from employees
+where salary > (
+    select max(salary)
+    from employees
+    where department = 'HR'
+)
+and salary < (
+    select max(salary)
+    from employees
+    where department = 'IT'
+)
+
+-----2.Find customers whose order amount is greater than average order of their city
+select distinct c.customer_id, c.name, c.city, o.amount
+from customers c
+inner join orders o on c.customer_id = o.customer_id
+where o.amount > (
+    select AVG(o2.amount)
+    from orders o2
+    inner join customers c2 on o2.customer_id = c2.customer_id
+    where c.city = c2.city
+)
+----3.Find products whose price is higher than average price of their category
+select product, category, price
+from sales s1
+where price > (
+    select avg(price)
+    from sales s2
+    where s1.category = s2.category
+)
+----4.Find employees who work in departments where average salary > overall average
+select name, department, salary
+from employees
+where department in (
+    select department
+    from employees
+    group by department
+    having avg(salary) > (
+    select AVG(salary) from employees
+    )
+)
